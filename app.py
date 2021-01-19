@@ -12,10 +12,9 @@ app = Flask(__name__)
 new_files = False
 
 def download_files():
-    print("Running download_files")
     # Creates a re-usable session object with your creds in-built
     github_session = requests.Session()
-    github_session.auth = (secrets.username, secrets.token)
+    github_session.auth = (secrets.username, secrets.github_token)
 
     # Downloading the csv file from your GitHub
     url = "https://raw.githubusercontent.com/elnathanau1/private-app-files/master/plex-recurring-downloads.csv"
@@ -32,13 +31,21 @@ def download_files():
         print(body)
 
         r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
-        print(r.text)
-        # if len(response_json['download_ids']) != 0:
-        #     new_files = True
+
+
+def scan_new_files():
+    # check if theres any new files downloading
+    r = requests.get('http://localhost:9050/download/status/all?status=DOWNLOADING')
+    response = json.loads(r.text)
+    if len(response['download_ids']) == 0:
+        # make scan call
+        url = 'http://%s:32400/library/sections/1/refresh?X-Plex-Token=%s' % (secrets.plex_ip, secrets.plex_token)
+        requests.get(url)
 
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(download_files, 'cron', hour='2', minute='0')
+scheduler.add_job(scan_new_files, 'cron', hour='2', minute='0')
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
