@@ -1,0 +1,11 @@
+[Unit]
+Description=Scheduled task to pull new episodes from online
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/pi/Documents/Development/plex-recurring-download/env/bin/python3 /home/pi/Documents/Development/plex-recurring-download/app.py --serve-in-foreground
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
