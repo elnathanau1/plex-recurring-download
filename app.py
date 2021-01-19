@@ -38,7 +38,7 @@ def download_files():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(download_files, 'cron', hour='2', minute='0')
+scheduler.add_job(download_files, 'cron', hour='1', minute='0')
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
