@@ -44,8 +44,8 @@ def scan_new_files():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(download_files, 'cron', hour='0', minute='0')
-scheduler.add_job(scan_new_files, 'cron', hour='9', minute='15')
+scheduler.add_job(download_files, 'cron', hour='0,4', minute='0')
+scheduler.add_job(scan_new_files, 'cron', hour='8', minute='0')
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
