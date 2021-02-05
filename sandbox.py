@@ -17,5 +17,6 @@ for folder1 in optimizations.subfolders():
                 for optimized_version in optimized_versions:
                     file = optimized_version.parts[0].file
                     file_age = difference = datetime.now() - datetime.fromtimestamp(os.path.getctime(file))
-                    print(file_age)
-                    # if file_age > timedelta(days = 30, minutes = 0):
+                    if file_age > timedelta(days = 0, hours = 5, minutes = 0):
+                        print(file)
+                        optimized_version.delete()
