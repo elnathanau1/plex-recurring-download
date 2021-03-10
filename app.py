@@ -3,6 +3,7 @@ import requests
 import io
 import json
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import secrets
