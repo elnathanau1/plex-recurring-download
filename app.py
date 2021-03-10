@@ -14,6 +14,8 @@ app = Flask(__name__)
 
 new_files = False
 
+@app.route("/download/recurring", methods=['POST'])
+@cross_origin()
 def download_files():
     print("Downloading new files")
     # Creates a re-usable session object with your creds in-built
@@ -34,6 +36,8 @@ def download_files():
             body[param] = row[param]
 
         r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
+
+    return "Success"
 
 
 def scan_new_files():
