@@ -17,6 +17,13 @@ new_files = False
 
 @app.route("/download/recurring", methods=['POST'])
 @cross_origin()
+def download_files_endpoint():
+    try:
+        download_files()
+        return "Success", 200
+    except:
+        return "Fail", 400
+
 def download_files():
     print("Downloading new files")
     # Creates a re-usable session object with your creds in-built
@@ -37,8 +44,6 @@ def download_files():
             body[param] = row[param]
 
         r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
-
-    return "Success"
 
 
 def scan_new_files():
@@ -74,7 +79,7 @@ def delete_old_optimizations():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(download_files, 'cron', hour='0,4', minute='0')
+scheduler.add_job(download_files, 'cron', hour='1,2,3,4,5,6', minute='0,20,40')
 scheduler.add_job(scan_new_files, 'cron', hour='8', minute='0')
 scheduler.add_job(delete_old_optimizations, 'cron', hour='6', minute='0')
 scheduler.start()
