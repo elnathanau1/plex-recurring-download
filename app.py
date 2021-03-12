@@ -84,7 +84,7 @@ def delete_old_optimizations():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(download_files, 'cron', hour='1,2,3,4,5,6', minute='0,20,40')
+scheduler.add_job(download_files, 'cron', hour='1,2,3,4,5,6', minute='0')
 scheduler.add_job(scan_new_files, 'cron', hour='8', minute='0')
 scheduler.add_job(delete_old_optimizations, 'cron', hour='6', minute='0')
 scheduler.start()
