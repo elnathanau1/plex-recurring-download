@@ -40,9 +40,14 @@ def download_files():
         params = ["season_url", "show_name", "season", "start_ep", "root_folder"]
         headers = {"X-API-SOURCE" : row["X-API-SOURCE"]}
         body = {}
+        isValid = True
         for param in params:
+            if row[param] != row[param]:
+                isValid = False
             body[param] = row[param]
 
+        if isValid != True:
+            pass
         r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
 
 
