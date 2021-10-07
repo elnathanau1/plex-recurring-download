@@ -46,6 +46,8 @@ def download_files():
                 isValid = False
             body[param] = row[param]
 
+        body["season"] = int(body["season"])
+
         if isValid != True:
             pass
         r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
@@ -86,7 +88,7 @@ def delete_old_optimizations():
 scheduler = BackgroundScheduler()
 scheduler.add_job(download_files, 'cron', hour='1,2,3,4,5,6', minute='0')
 scheduler.add_job(scan_new_files, 'cron', hour='8', minute='0')
-scheduler.add_job(delete_old_optimizations, 'cron', hour='6', minute='0')
+# scheduler.add_job(delete_old_optimizations, 'cron', hour='6', minute='0')
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
@@ -94,4 +96,4 @@ atexit.register(lambda: scheduler.shutdown())
 
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=9053, use_reloader=False)
+    app.run(host="0.0.0.0", port=9053, use_reloader=False)
