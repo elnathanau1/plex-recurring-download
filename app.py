@@ -15,6 +15,7 @@ app = Flask(__name__)
 
 new_files = False
 
+
 @app.route("/download/recurring", methods=['POST'])
 @cross_origin()
 def download_files_endpoint():
@@ -24,8 +25,9 @@ def download_files_endpoint():
     except:
         return "Fail", 400
 
+
 def download_files():
-    print("Downloading new files")
+    app.logger.info("Downloading new files")
     # Creates a re-usable session object with your creds in-built
     github_session = requests.Session()
     github_session.auth = (secrets.username, secrets.github_token)
@@ -38,7 +40,7 @@ def download_files():
 
     for _, row in df.iterrows():
         params = ["season_url", "show_name", "season", "start_ep", "root_folder"]
-        headers = {"X-API-SOURCE" : row["X-API-SOURCE"]}
+        headers = {"X-API-SOURCE": row["X-API-SOURCE"]}
         body = {}
         isValid = True
         for param in params:
@@ -50,11 +52,12 @@ def download_files():
 
         if isValid != True:
             pass
-        r = requests.post('http://localhost:9050/download/season', json = body, headers = headers)
+        url = 'http://%s:9050/download/season'.format(secrets.plex_ip)
+        r = requests.post('http://localhost:9050/download/season', json=body, headers=headers)
 
 
 def scan_new_files():
-    print("Plex scanning for new files")
+    app.logger.info("Plex scanning for new files")
     # check if theres any new files downloading
     r = requests.get('http://localhost:9050/download/status/all?status=DOWNLOADING')
     response = json.loads(r.text)
@@ -65,7 +68,7 @@ def scan_new_files():
 
 
 def delete_old_optimizations():
-    print("Deleting old optimizations")
+    app.logger.info("Deleting old optimizations")
     baseurl = 'http://%s:32400' % secrets.plex_ip
     plex = PlexServer(baseurl, secrets.plex_token)
     tv_shows = plex.library.section("TV Shows")
@@ -80,8 +83,8 @@ def delete_old_optimizations():
                     for optimized_version in optimized_versions:
                         file = optimized_version.parts[0].file
                         file_age = difference = datetime.now() - datetime.fromtimestamp(os.path.getctime(file))
-                        if file_age > timedelta(days = 30, hours = 0, minutes = 0):
-                            print("Deleting: %s" % file)
+                        if file_age > timedelta(days=30, hours=0, minutes=0):
+                            app.logger.info("Deleting: %s", file)
                             optimized_version.delete()
 
 
@@ -93,7 +96,6 @@ scheduler.start()
 
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=9053, use_reloader=False)
